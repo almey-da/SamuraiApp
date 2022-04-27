@@ -41,10 +41,38 @@ namespace Data.Repositories
             return result;
         }
 
+        public async Task<IEnumerable<Samurai>> GetAllSamuraiWithSword()
+        {
+            var result = await _context.Samurais.Include(s=>s.Swords).AsNoTracking().ToListAsync();
+            return result;
+        }
+
+        public async Task<IEnumerable<Samurai>> GetAllSamuraiWithSwordAndElement()
+        {
+            var result = await _context.Samurais.Include(s => s.Swords)
+                .ThenInclude(e=>e.Elements).AsNoTracking().ToListAsync();
+            return result;
+        }
+
         public async Task<Samurai> GetById(int id)
         {
             var result = await _context.Samurais.FirstOrDefaultAsync(s => s.Id == id);
             if (result == null) throw new Exception($"Data samurai id: {id} tidak ditemukan");
+            return result;
+        }
+
+        public async Task<Samurai> GetByIdSamuraiWithSword(int id)
+        {
+            var result = await _context.Samurais.Include(s=>s.Swords).FirstOrDefaultAsync(s => s.Id == id);
+            if (result == null) throw new Exception($"Data samurai with sword id: {id} tidak ditemukan");
+            return result;
+        }
+
+        public async Task<Samurai> GetByIdSamuraiWithSwordAndElement(int id)
+        {
+            var result = await _context.Samurais.Include(s => s.Swords)
+                .ThenInclude(e=>e.Elements).FirstOrDefaultAsync(s => s.Id == id);
+            if (result == null) throw new Exception($"Data samurai with sword id: {id} tidak ditemukan");
             return result;
         }
 

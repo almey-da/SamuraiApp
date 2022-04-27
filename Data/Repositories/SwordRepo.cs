@@ -41,9 +41,22 @@ namespace Data.Repositories
             return result;
         }
 
+        public async Task<IEnumerable<Sword>> GetAllSwordWithElement()
+        {
+            var result = await _context.Swords.Include(e=>e.Elements).AsNoTracking().ToListAsync();
+            return result;
+        }
+
         public async Task<Sword> GetById(int id)
         {
             var result = await _context.Swords.FirstOrDefaultAsync(s => s.id == id);
+            if (result == null) throw new Exception($"Data Sword id: {id} tidak ditemukan");
+            return result;
+        }
+
+        public async Task<Sword> GetByIdSwordWithElement(int id)
+        {
+            var result = await _context.Swords.Include(e => e.Elements).FirstOrDefaultAsync(s => s.id == id);
             if (result == null) throw new Exception($"Data Sword id: {id} tidak ditemukan");
             return result;
         }
@@ -96,5 +109,6 @@ namespace Data.Repositories
                 throw new Exception(ex.Message);
             }
         }
+
     }
 }

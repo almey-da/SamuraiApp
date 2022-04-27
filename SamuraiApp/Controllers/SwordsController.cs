@@ -97,5 +97,41 @@ namespace swordApp.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("Element")]
+        public async Task<ActionResult> PostSwordWithElement(CreateSwordWithElementDTO createSwordWithElementDTO)         //automapping
+        {
+            try
+            {
+                var newSword = _mapper.Map<Sword>(createSwordWithElementDTO);
+                var result = await _swords.Insert(newSword);
+                var swordDto = _mapper.Map<ViewSwordDTO>(result);
+
+                return CreatedAtAction("GetByIdSwordWithElement", new { id = result.id }, swordDto);  //automapper, kembaliannya code 201
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("Element")]
+        public async Task<IEnumerable<ViewSwordWithElementDTO>> GetAllSwordWithElement()
+        {
+            var results = await _swords.GetAllSwordWithElement();
+            var output = _mapper.Map<IEnumerable<ViewSwordWithElementDTO>>(results);
+            return output;
+        }
+
+        [HttpGet("Element/{id}")]
+        public async Task<ActionResult<ViewSwordWithElementDTO>> GetByIdSwordWithElement(int id)     //tanpa automapper <sword>
+        {
+            var result = await _swords.GetByIdSwordWithElement(id);
+            if (result == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<ViewSwordWithElementDTO>(result));         //tidak pake IEnumerable karena satu obj saja 
+        }
     }
 }

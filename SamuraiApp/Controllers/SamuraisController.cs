@@ -3,6 +3,7 @@ using Data.Interface;
 using Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SamuraiApp.DTO.Samurai;
 using SamuraiApp.DTO.Sword;
 
 namespace SamuraiApp.Controllers
@@ -97,6 +98,63 @@ namespace SamuraiApp.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        //insert samurai with swords
+        [HttpPost("{Sword}")]
+        public async Task<ActionResult> Post(CreateSamuraiWithSwordDTO createSamuraiWithSwordDTO)         //automapping
+        {
+            try
+            {
+
+                var newSamurai = _mapper.Map<Samurai>(createSamuraiWithSwordDTO);
+                var result = await _samurais.Insert(newSamurai);
+                var samuraiDto = _mapper.Map<ViewSamuraiDTO>(result);
+
+                return CreatedAtAction("GetByIdSamuraiWithSword", new { id = result.Id }, samuraiDto);  //automapper, kembaliannya code 201
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //view all samurai with swords
+        [HttpGet("Sword")]
+        public async Task<IEnumerable<ViewSamuraiWithSwordDTO>> GetAllSamuraiWithSword()
+        {
+            var results = await _samurais.GetAllSamuraiWithSword();
+            var output = _mapper.Map<IEnumerable<ViewSamuraiWithSwordDTO>>(results);
+            return output;
+        }
+
+        [HttpGet("Sword/{id}")]
+        public async Task<ActionResult<ViewSamuraiWithSwordDTO>> GetByIdSamuraiWithSword(int id)     //tanpa automapper <Samurai>
+        {
+            var result = await _samurais.GetByIdSamuraiWithSword(id);
+            if (result == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<ViewSamuraiWithSwordDTO>(result));         //tidak pake IEnumerable karena satu obj saja 
+        }
+
+        [HttpGet("Sword/Element")]
+        public async Task<IEnumerable<ViewSamuraiWithSwordAndElementDTO>> GetAllSamuraiWithSwordAndElement()
+        {
+            var results = await _samurais.GetAllSamuraiWithSwordAndElement();
+            var output = _mapper.Map<IEnumerable<ViewSamuraiWithSwordAndElementDTO>>(results);
+            return output;
+        }
+
+        [HttpGet("Sword/Element/{id}")]
+        public async Task<ActionResult<ViewSamuraiWithSwordAndElementDTO>> GetByIdSamuraiWithSwordAndElement(int id)     //tanpa automapper <Samurai>
+        {
+            var result = await _samurais.GetByIdSamuraiWithSwordAndElement(id);
+            if (result == null)
+                return NotFound();
+
+            return Ok(_mapper.Map<ViewSamuraiWithSwordAndElementDTO>(result));         //tidak pake IEnumerable karena satu obj saja 
         }
 
     }
