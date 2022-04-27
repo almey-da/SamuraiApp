@@ -14,6 +14,8 @@ namespace SamuraiApp.Profiles
             CreateMap<CreateSamuraiWithSwordDTO, Samurai>();
             CreateMap<Samurai, ViewSamuraiWithSwordDTO>();
             CreateMap<Samurai, ViewSamuraiWithSwordAndElementDTO>();
+            CreateMap<CreateSamuraiWithSwordAndElementDTO, Samurai>();
+            
         }
     }
 }

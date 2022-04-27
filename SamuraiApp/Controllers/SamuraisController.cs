@@ -157,5 +157,25 @@ namespace SamuraiApp.Controllers
             return Ok(_mapper.Map<ViewSamuraiWithSwordAndElementDTO>(result));         //tidak pake IEnumerable karena satu obj saja 
         }
 
+        //insert samurai with swords and elements
+        [HttpPost("Samurai/Sword/Element")]
+        public async Task<ActionResult> Post(CreateSamuraiWithSwordAndElementDTO createSamuraiWithSwordDTO)         //automapping
+        {
+            try
+            {
+
+                var newSamurai = _mapper.Map<Samurai>(createSamuraiWithSwordDTO);
+                var result = await _samurais.Insert(newSamurai);
+
+                var samuraiDto = _mapper.Map<ViewSamuraiWithSwordAndElementDTO>(result);
+
+                return CreatedAtAction("GetByIdSamuraiWithSwordAndElement", new { id = result.Id }, samuraiDto);  //automapper, kembaliannya code 201
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
